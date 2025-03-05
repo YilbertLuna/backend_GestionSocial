@@ -1,0 +1,87 @@
+services:
+  postgresql-9.1.24:
+    container_name: postgresql-9.1.24
+    image: postgres:9.1.24
+    ports:
+      - "5440:5432"
+    environment:
+      POSTGRES_USER: adminGs9124
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: version9
+    volumes:
+      - postgresql9.1.24:/var/lib/postgresql/data
+    networks:
+      - gestion_social
+    healthcheck:
+      test: psql -U adminGs9124 -d version9 -c "SELECT 1" || exit 1
+      interval: 1m30s
+      timeout: 30s
+      retries: 5
+
+  postgresql-16.0:
+    container_name: postgresql-16.0
+    image: postgres:16.0-alpine
+    ports:
+      - "5450:5432"
+    environment:
+      POSTGRES_USER: adminGs16
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: version16
+    volumes:
+      - postgresql16.0:/var/lib/postgresql/data
+    networks:
+      - gestion_social
+    healthcheck:
+      test: pg_isready -U adminGs16 -d version16
+      interval: 1m30s
+      timeout: 30s
+      retries: 5
+
+  postgresql-dev-16.0:
+    container_name: postgresql-dev-16.0
+    image: postgres:16.0-alpine
+    ports:
+      - "5430:5432"
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: postgres-dev
+    volumes:
+      - postgresql-dev:/var/lib/postgresql/data
+    networks:
+      - gestion_social
+    healthcheck:
+      test: pg_isready -U admin -d postgres-dev
+      interval: 1m30s
+      timeout: 30s
+      retries: 5
+
+  webserver:
+    container_name: webserver
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    ports:
+      - 3030:3030
+    volumes: 
+      - ./:/app
+    command: ["npm", "run", "start:dev"]
+    env_file:
+      - ./.env
+    networks:
+      - gestion_social
+    depends_on:
+      - postgresql-dev-16.0
+
+networks:
+  gestion_social:
+    name: gestion_social
+    driver: bridge
+
+volumes: 
+  postgresql9.1.24:
+    name: postgresql9.1.24
+  postgresql16.0:
+    name: postgresql16.0
+  postgresql-dev:
+    name: postgresql-dev
