@@ -4,7 +4,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "start": "migration:run && node src/index.js",
+    "start": "npm run migration:run && node src/index.js",
     "start:dev": "npm run migration:run && nodemon src/index.js",
     "migration:generate": "npx sequelize migration:generate --name $npm_config_name",
     "migration:run": "sequelize db:migrate"
