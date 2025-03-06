@@ -1,13 +1,14 @@
 import app from "./server/server.js";
 import 'dotenv/config';
-import { connectionDatabase } from "./connection/connection.js";
+import { sequelize } from "./connection/connection.js";
 
 const port = process.env.PORT || 3000;
 
 async function startServer() {
     
     try {
-        await connectionDatabase();
+        await sequelize.authenticate()
+        console.log('Connection has been established successfully 🟢')
     } catch (error) {
         process.exit(1);
     }
