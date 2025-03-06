@@ -1,14 +1,38 @@
-import { login, TypeUserLoginError, UndefinedUserLoginError } from "../services/login.services.js";
+import { getDataUser } from "../services/getDataUser.services.js";
+import {
+    UndefinedUserLoginError,
+    TypeUserLoginError,
+    UndefinedUserPasswordError,
+    TypeUserPasswordError, 
+    IncorretUserPasswordError,
+    UndefinedLoginPassword
+} from "../middleware/errors.middleware.js";
+import { validateInputDataUser, validateUserPassword } from "../middleware/validateErrors.middleware.js";
+import { compareUserPassword } from "../middleware/comparePassword.middeware.js";
 
 export const loginController = async (req, res) => {
     try {
         res.set("Content-Type", "application/json");
-        const {usualogin} = req.body;
-        const data = await login(usualogin);
-        res.status(200).json(data);
+
+        const {userLogin, userPassword} = req.body;
+        validateInputDataUser(userLogin, userPassword)
+        validateUserPassword(userPassword)
+
+        const data = await getDataUser(userLogin);
+        const password = data?.map(({usua_password}) => usua_password)
+        compareUserPassword(userPassword, password)
+
+        res.status(200).json({message: "login susccesfuly", data: data})
+
     } catch (error) {
         if(error instanceof UndefinedUserLoginError || error instanceof TypeUserLoginError){
             res.status(400).json({message: error.message});
+        }
+        if(error instanceof UndefinedUserPasswordError || error instanceof TypeUserPasswordError || error instanceof IncorretUserPasswordError){
+            res.status(400).json({message: error.message})
+        }
+        if(error instanceof UndefinedLoginPassword){
+            res.status(400).json({message: error.message})
         }
         else {
             res.status(500).json({message: 'internal server error'})
