@@ -6,7 +6,7 @@ export class userRepository {
   }
 
   async findUser(userLogin) {
-    const query = `SELECT * FROM usuarios where usua_login='${userLogin}'`;
+    const query = `SELECT * FROM usuarios where usua_login='${userLogin}' and status='A'`;
     const [data, ] = await sequelize.query(query)
     return data
   }
