@@ -5,15 +5,21 @@ export class UserRepository {
     this.sequelize = sequelize
   }
 
-  async findUser(userLogin) {
-    const query = `SELECT * FROM usuarios where usua_login='${userLogin}' and status='A'`;
-    const [data, ] = await sequelize.query(query)
-    return data
-  }
-
-  async findDependence(userId) {
-    console.log(userId)
-    const query = `select * from permisos where usuarios_usua_cedula = '${userId}' and estatus='A'`;
+  async getData(username) {
+    const query = `
+      SELECT usuarios.*,
+        permisos.*,
+        dependencias.depe_nombre
+      FROM usuarios
+      INNER JOIN permisos ON usuarios.usua_cedula = permisos.usuarios_usua_cedula
+      inner join dependencias ON usuarios.dependencias_depe_id = dependencias.depe_id
+      WHERE 
+        usuarios.usua_login = '${username}'
+        AND usuarios.status = 'A'
+        AND permisos.estatus = 'A'
+      ORDER BY 
+        permisos.modulos_modu_id;
+    `
     const [data, ] = await sequelize.query(query)
     return data
   }

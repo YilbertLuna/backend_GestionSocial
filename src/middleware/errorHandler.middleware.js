@@ -1,13 +1,13 @@
 export class UndefinedUserLoginError extends Error {
     constructor() {
-        super("user login is required")
+        super(" username is required")
         this.name = "UndefinedUserLoginError"
     }
 }
 
 export class TypeUserLoginError extends Error {
     constructor() {
-        super("user login must be a string")
+        super(" username must be a string")
         this.name = "TypeUserLoginError"
     }
 }
@@ -37,5 +37,12 @@ export class UndefinedLoginPassword extends Error {
     constructor() {
         super("userLogin and password is required")
         this.name = "UndefinedLoginPassword"
+    }
+}
+
+export class UndefinedData extends Error {
+    constructor() {
+        super("this user not found")
+        this.name = "UndefinedData"
     }
 }
