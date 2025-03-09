@@ -9,6 +9,6 @@ export const loginSchema = z.object({
   password: z.string({
     required_error: "password is required"
   }).max(40,
-    {message: "username must be at las 40 characters"}
+    {message: "password must be at las 40 characters"}
   )
 })
