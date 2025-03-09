@@ -33,13 +33,6 @@ export class IncorretUserPasswordError extends Error {
     }
 }
 
-export class UndefinedLoginPassword extends Error {
-    constructor() {
-        super("userLogin and password is required")
-        this.name = "UndefinedLoginPassword"
-    }
-}
-
 export class UndefinedData extends Error {
     constructor() {
         super("this user not found")

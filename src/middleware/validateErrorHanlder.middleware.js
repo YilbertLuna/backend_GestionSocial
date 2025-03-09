@@ -3,7 +3,6 @@ import {
     TypeUserLoginError,
     UndefinedUserPasswordError,
     TypeUserPasswordError,
-    UndefinedLoginPassword,
     UndefinedData
 } from "./errorHandler.middleware.js";
 
@@ -22,12 +21,6 @@ export function validateUserPassword (userPassword){
     }
     if(typeof userPassword !== "string") {
         throw new TypeUserPasswordError()
-    }
-}
-
-export function validateInputDataUser (userlogin, userPassword) {
-    if(!userlogin && !userPassword){
-        throw new UndefinedLoginPassword()
     }
 }
 
