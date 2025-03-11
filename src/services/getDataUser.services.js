@@ -18,9 +18,9 @@ export const loginUser = async (username, password) => {
     const passwrd = data[0].usua_password
     compareUserPassword(password, passwrd)
 
-    const dataPayload = createPayload(data)
+    const payload = createPayload(data)
 
-    const token = new AccessToken().createdAccesToken(dataPayload)
+    const token = new AccessToken().created(payload)
 
     return token
 }

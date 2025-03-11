@@ -1,5 +1,5 @@
 export function createPayload(payload) {
-    const dataPayload = {
+    const data = {
         nombre: payload[0].usua_nombre,
         cedula: payload[0].usua_cedula,
         dependencia_id: payload[0].dependencias_depe_id,
@@ -9,5 +9,5 @@ export function createPayload(payload) {
         modulos: payload.map(({modulos_modu_id}) => modulos_modu_id)
     }
     
-    return dataPayload
+    return data
 }
