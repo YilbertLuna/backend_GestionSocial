@@ -5,17 +5,14 @@ import {
     TypeUserPasswordError, 
     IncorretUserPasswordError,
     UndefinedData
-} from "../middleware/errorHandler.middleware.js";
-import { validateUserPassword } from "../middleware/validateErrorHanlder.middleware.js";
-import { loginUser } from "../services/getDataUser.services.js";
+} from "../../middleware/errorHandler.middleware.js";
+import { loginUser } from "../../services/getDataUser.services.js";
 
 
 export const loginController = async (req, res) => {
     try {
         res.set("Content-Type", "application/json");
-
         const {username, password} = req.body;
-        validateUserPassword(password)
 
         const data = await loginUser(username, password)
         res.cookie('token', data)
@@ -33,7 +30,8 @@ export const loginController = async (req, res) => {
             res.status(400).json({message: error.message})
         }
         else {
-            res.status(500).json({message: `internal server error`})
+            res.status(500).json({message: `internal server error ${error}`})
+            console.log(error.message)
         }
     }
 };
