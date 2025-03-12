@@ -21,17 +21,16 @@ export const loginController = async (req, res) => {
 
     } catch (error) {
         if(error instanceof UndefinedData) {
-            res.status(400).json({message: error.message})
+            return res.status(400).json({message: error.message})
         }
         if(error instanceof UndefinedUserLoginError || error instanceof TypeUserLoginError){
-            res.status(400).json({message: error.message});
+            return res.status(400).json({message: error.message});
         }
         if(error instanceof UndefinedUserPasswordError || error instanceof TypeUserPasswordError || error instanceof IncorretUserPasswordError){
-            res.status(400).json({message: error.message})
+            return res.status(400).json({message: error.message})
         }
         else {
-            res.status(500).json({message: `internal server error ${error}`})
-            console.log(error.message)
+            return res.status(500).json({message: `internal server error ${error}`})
         }
     }
 };
