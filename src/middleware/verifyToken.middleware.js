@@ -18,8 +18,7 @@ export const verifyTokenMiddleware = (req, res, next) => {
 
     // 2. Verificación y decodificación
     const decoded = tokenVerifier.verify(token);
-    console.log('decoded ' + decoded)
-    
+
     // 3. Validación de estructura básica
     if (!decoded) {
         return res.status(401).json({
