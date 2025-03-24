@@ -1,7 +1,7 @@
 import { sequelize } from "../connection/connection.js";
 
 export class UserRepository {
-  constructor(sequelize){
+  constructor(){
     this.sequelize = sequelize
   }
 
