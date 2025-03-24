@@ -13,7 +13,6 @@ export class NewRegisterRepository {
                 requisitosValues += ', '; // Agregar coma entre las filas excepto en la última
             }
         });
-        console.log(beneficiario)
         const sqlStatement = `
             WITH a AS (
                 INSERT INTO tramites (
