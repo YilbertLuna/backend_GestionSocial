@@ -39,3 +39,24 @@ export class UndefinedData extends Error {
         this.name = "UndefinedData"
     }
 }
+
+export class PersonIsExist extends Error {
+    constructor() {
+        super("this person already exists")
+        this.name = "PersonIsExist"
+    }
+}
+
+export class InvalidCode extends Error {
+    constructor() {
+        super("invalid code. The generated number is outside the allowed range")
+        this.name = "InvalidCode"
+    }
+}
+
+export class VerifyInitialLettersInRange extends Error {
+    constructor() {
+        super("the initial letters of the range do not match")
+        this.name = "verifyInitialLettersInRange"
+    }
+}
