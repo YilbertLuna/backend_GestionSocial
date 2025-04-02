@@ -4,75 +4,46 @@ import { NewRegisterRepository } from "../repository/newRegisterRepository.js"
 const newRegister = new NewRegisterRepository()
 
 export const newRegisterService = async (
-    isBeneficiario,
-    benf_apellidos,
-    benf_nombres,
-    benf_cedula,
-    benf_direccion,
-    benf_foto,
-    benf_parroquia_parr_id,
-    benf_parroquia_municipio_muni_id,
-    benf_parroquia_municipio_estado_estado_id,
-    benf_fec_nac,
-    benf_nacionalidad,
-    requisitos,
-    numeroTelefono,
-    numeroTelefonoFijo,
-    correo,referido,
-    idDependence,
-    pers_cedula,
+    aplicationData,
+    beneficiaryData,
+    dataAplicant,
+    dataLocation,
+    isAplicantBeneficiary,
+    requeriments,
+    dependencia_id,
     cedula,
-    monto, descripcionAyuda,
-    pers_apellidos,
-    pers_nombres,
-    pers_direccion,
-    pers_foto,
-    parroquia_parr_id,
-    parroquia_municipio_muni_id,
-    parroquia_municipio_estado_estado_id,
-    pers_fec_nac,
-    pers_nacionalidad, 
     ) => {
-    await validatePerson({ pers_cedula });
-    const newNumberProcess = await generateCodeProcess(idDependence)
-    const originProcess = await idOriginProcess(referido)
-    const contact = await contactPerson(numeroTelefono, numeroTelefonoFijo, correo)
-    const [req, [processStatus]] = requirements(requisitos)
-    const [beneficiario] = benef(
-        isBeneficiario,
-        pers_apellidos,
-        pers_nombres,
-        pers_cedula,
-        pers_direccion,
-        pers_foto,
-        parroquia_parr_id,
-        parroquia_municipio_muni_id,
-        parroquia_municipio_estado_estado_id,
-        pers_fec_nac,
-        pers_nacionalidad,
-        benf_apellidos,
-        benf_nombres,
-        benf_cedula,
-        benf_direccion,
-        benf_foto,
-        benf_parroquia_parr_id,
-        benf_parroquia_municipio_muni_id,
-        benf_parroquia_municipio_estado_estado_id,
-        benf_fec_nac,
-        benf_nacionalidad
-    )
-    await newRegister.register({ beneficiario, req, processStatus, contact, originProcess, newNumberProcess, idDependence, monto, descripcionAyuda, cedula, pers_apellidos,pers_nombres,pers_cedula,pers_direccion,pers_foto,parroquia_parr_id,parroquia_municipio_muni_id,parroquia_municipio_estado_estado_id,pers_fec_nac,pers_nacionalidad });
+    await validatePerson({ dataAplicant });
+    const newNumberProcess = await generateCodeProcess(dependencia_id)
+    const originProcess = await idOriginProcess(aplicationData)
+    const contact = await contactPerson(dataLocation)
+    const [req, [processStatus]] = reque(requeriments)
+    const [beneficiario] = benef(isAplicantBeneficiary, dataAplicant, beneficiaryData, dataLocation)
+
+    await newRegister.register({ 
+        beneficiario, 
+        req, 
+        processStatus, 
+        contact, 
+        originProcess, 
+        newNumberProcess, 
+        aplicationData,
+        dataAplicant,
+        dataLocation,
+        dependencia_id,
+        cedula
+    });
 }
 
-const validatePerson = async({ pers_cedula }) => {
-    const person = await newRegister.findPerson(pers_cedula);
+const validatePerson = async({ dataAplicant }) => {
+    const person = await newRegister.findPerson(dataAplicant.pers_cedula);
     validatePersonIsExist(person)
 }
 
-const generateCodeProcess = async (idDependence) => {
+const generateCodeProcess = async (dependencia_id) => {
     // Obtener el último código de trámite de la dependencia
-    const lastNumberProcess = await newRegister.lastCodeProcess(idDependence);
-    const range = await newRegister.rangeDependence(idDependence);
+    const lastNumberProcess = await newRegister.lastCodeProcess(dependencia_id);
+    const range = await newRegister.rangeDependence(dependencia_id);
     const code = lastNumberProcess.nro_tramite;
 
     // Extraer las letras iniciales y los números del rango inicial y final
@@ -104,12 +75,12 @@ const generateCodeProcess = async (idDependence) => {
     return newCodeProcess;
 }
 
-const idOriginProcess = async (procedencia) => {
-    const id = await newRegister.FindIdProcedencia(procedencia)
+const idOriginProcess = async (aplicationData) => {
+    const id = await newRegister.FindIdProcedencia(aplicationData.referido)
     return id
 }
 
-const contactPerson = async (numeroTelefono, numeroTelefonoFijo, correo) => {
+const contactPerson = async (dataLocation) => {
     // obtener el maximo id
     const maxId = await newRegister.lastIdContactPersons()
     const newId = maxId + 1
@@ -118,33 +89,33 @@ const contactPerson = async (numeroTelefono, numeroTelefonoFijo, correo) => {
     let contactPerson;
 
     // Validar si no se recibe el teléfono
-    if (!numeroTelefono || numeroTelefono === '') {
-        if (numeroTelefonoFijo && numeroTelefonoFijo !== '') {
-            contactPerson = numeroTelefonoFijo;
+    if (!dataLocation.TelefonoCelular || dataLocation.TelefonoCelular === '') {
+        if (dataLocation.TelefonoFijo && dataLocation.TelefonoFijo !== '') {
+            contactPerson = dataLocation.TelefonoFijo;
             contactType = 2 // Tipo 2 para teléfono fijo
-        } else if (correo && correo !== '') {
-            contactPerson = correo;
+        } else if (dataLocation.Correo && dataLocation.Correo !== '') {
+            contactPerson = dataLocation.Correo;
             contactType = 3; // Tipo 3 para correo electrónico
         }
     } else {
         contactType = 1; // Por defecto, tipo 1 (telefono)
-        contactPerson = numeroTelefono; // Por defecto, el contacto es el teléfono
+        contactPerson = dataLocation.TelefonoCelular; // Por defecto, el contacto es el teléfono
     }
 
     const object = { newId, contactType, contactPerson };
     return object;
 }
 
-const requirements = (requirements) => {
-    const i = requirements.length;
+const reque = (requeriments) => {
+    const i = requeriments.length;
     let reqfaltante = 0;
     let processStatus;
     const statedRequirements = [];
     
     for (let index = 0; index < i; index++) {
-        if(requirements[index].status === 'c'){
-            statedRequirements.push(requirements[index]);
-        } else if(requirements[index].status === 'u') {
+        if(requeriments[index].estatus === 'C'){
+            statedRequirements.push(requeriments[index]);
+        } else if(requeriments[index].estatus === 'U') {
             reqfaltante++
         }
     }
@@ -158,57 +129,37 @@ const requirements = (requirements) => {
     const object = [statedRequirements, [{status: processStatus}]]
     return object;
 }
-const benef = (
-    isBeneficiario,
-    pers_apellidos,
-    pers_nombres,
-    pers_cedula,
-    pers_direccion,
-    pers_foto,
-    parroquia_parr_id,
-    parroquia_municipio_muni_id,
-    parroquia_municipio_estado_estado_id,
-    pers_fec_nac,
-    pers_nacionalidad,
-    benf_apellidos,
-    benf_nombres,
-    benf_cedula,
-    benf_direccion,
-    benf_foto,
-    benf_parroquia_parr_id,
-    benf_parroquia_municipio_muni_id,
-    benf_parroquia_municipio_estado_estado_id,
-    benf_fec_nac,
-    benf_nacionalidad) => {
+
+const benef = (isAplicantBeneficiary, dataAplicant, beneficiaryData, dataLocation) => {
 
     const beneficiarioData = []
 
-    if(isBeneficiario === 'si') {
+    if(isAplicantBeneficiary === 'SI') {
         beneficiarioData.push({
-            "benf_apellidos": pers_apellidos,
-            "benf_nombres": pers_nombres,
-            "benf_cedula":  pers_cedula,
-            "benf_direccion": pers_direccion,
-            "benf_foto": pers_foto,
-            "benf_parroquia_parr_id": parroquia_parr_id,
-            "benf_parroquia_municipio_muni_id": parroquia_municipio_muni_id,
-            "benf_parroquia_municipio_estado_estado_id": parroquia_municipio_estado_estado_id,
-            "benf_fec_nac": pers_fec_nac,
-            "benf_nacionalidad": pers_nacionalidad
+            "benf_apellidos": dataAplicant.pers_apellidos,
+            "benf_nombres": dataAplicant.pers_nombres,
+            "benf_cedula": dataAplicant.pers_cedula,
+            "benf_direccion": dataLocation.Direccion || null, // Manejar valores opcionales
+            "benf_foto": dataAplicant.pers_foto,
+            "benf_parroquia_id": dataLocation.parroquia_id || null,
+            "benf_municipio_id": dataLocation.municipio_id || null,
+            "benf_estado_id": dataLocation.estado_id || null,
+            "benf_fec_nac": dataAplicant.pers_fec_nac,
+            "benf_document": dataAplicant.pers_document || null
         })
-    } else if(isBeneficiario === 'no') {
+    } else if(isAplicantBeneficiary === 'NO') {
         beneficiarioData.push({
-            "benf_apellidos" : benf_apellidos,
-            "benf_nombres" : benf_nombres,
-            "benf_cedula" : benf_cedula,
-            "benf_direccion" : benf_direccion,
-            "benf_foto" : benf_foto,
-            "benf_parroquia_parr_id" : benf_parroquia_parr_id,
-            "benf_parroquia_municipio_muni_id" : benf_parroquia_municipio_muni_id,
-            "benf_parroquia_municipio_estado_estado_id" : benf_parroquia_municipio_estado_estado_id,
-            "benf_fec_nac" : benf_fec_nac,
-            "benf_nacionalidad" : benf_nacionalidad
-        })
+            "benf_apellidos": beneficiaryData.benf_apellidos,
+            "benf_nombres": beneficiaryData.benf_nombres,
+            "benf_cedula": beneficiaryData.benf_cedula,
+            "benf_direccion": beneficiaryData.benf_direccion,
+            "benf_foto": "foto",
+            "benf_parroquia_id": beneficiaryData.benf_parroquia || null,
+            "benf_municipio_id": beneficiaryData.benf_municipio || null,
+            "benf_estado_id": beneficiaryData.benf_estado || null,
+            "benf_fec_nac": beneficiaryData.benf_fec_nac,
+            "benf_document": beneficiaryData.benf_document || null
+        });
     }
 
     return beneficiarioData;
