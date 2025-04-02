@@ -5,14 +5,15 @@ export class NewRegisterRepository {
         this.sequelize = sequelize;
     }
 
-    async register({beneficiario, req, processStatus, contact, originProcess, newNumberProcess, idDependence, monto, descripcionAyuda, cedula, pers_apellidos,pers_nombres,pers_cedula,pers_direccion,pers_foto,parroquia_parr_id,parroquia_municipio_muni_id,parroquia_municipio_estado_estado_id,pers_fec_nac,pers_nacionalidad}) {
+    async register({ beneficiario, req, processStatus, contact, originProcess, newNumberProcess,  aplicationData, dataAplicant, dataLocation, dependencia_id, cedula }) {
         let requisitosValues = '';
         req.forEach((requisito, index) => {
-            requisitosValues += `( ${requisito.req_id}, '${requisito.depe_id}', '${requisito.ayuda}', '${requisito.area}', (SELECT tram_id FROM a))`;
+            requisitosValues += `( ${requisito.requ_id}, '${requisito.depe_id}', '${requisito.id_ayuda}', '${requisito.id_area}', (SELECT tram_id FROM a))`;
             if (index < req.length - 1) {
-                requisitosValues += ', '; // Agregar coma entre las filas excepto en la última
+                requisitosValues += ', ';
             }
         });
+
         const sqlStatement = `
             WITH a AS (
                 INSERT INTO tramites (
@@ -22,8 +23,8 @@ export class NewRegisterRepository {
                     usua_cedula
                 ) VALUES (
                     NOW(),
-                    ${monto},
-                    '${descripcionAyuda}',
+                    ${aplicationData.monto},
+                    '${aplicationData.description}',
                     '${cedula}'
                 )
                 RETURNING *
@@ -42,17 +43,17 @@ export class NewRegisterRepository {
                     pers_nacionalidad
                 )
                 VALUES (
-                    '${pers_apellidos}',
-                    '${pers_nombres}',
-                    '${pers_cedula}',
-                    '${pers_direccion}',
-                    '${pers_foto}',
-                    ${parroquia_parr_id},
-                    ${parroquia_municipio_muni_id},
-                    ${parroquia_municipio_estado_estado_id},
+                    '${dataAplicant.pers_apellidos}',
+                    '${dataAplicant.pers_nombres}',
+                    '${dataAplicant.pers_cedula}',
+                    '${dataLocation.Direccion}',
+                    '${dataAplicant.pers_foto}',
+                    ${dataLocation.parroquia_id},
+                    ${dataLocation.municipio_id},
+                    ${dataLocation.estado_id},
                     1,
-                    '${pers_fec_nac}',
-                    '${pers_nacionalidad}'
+                    '${dataAplicant.pers_fec_nac}',
+                    '${dataAplicant.pers_document}'
                 )
                 RETURNING *
             ), c AS (
@@ -88,7 +89,7 @@ export class NewRegisterRepository {
                 ) VALUES (
                     (SELECT tram_id FROM a),
                     '${newNumberProcess}',
-                    ${idDependence} 
+                    ${dependencia_id} 
                 )
             ), f AS (
                 INSERT INTO contacto_persona (
@@ -112,6 +113,7 @@ export class NewRegisterRepository {
                     servicios_area_id,
                     tramites_tram_id
                 ) VALUES ${requisitosValues}
+                RETURNING *
             ), h AS (
                 INSERT INTO status_tramites VALUES (
                     (SELECT tram_id FROM a),
@@ -142,12 +144,12 @@ export class NewRegisterRepository {
                     '${beneficiario.benf_cedula}',
                     '${beneficiario.benf_direccion}',
                     '${beneficiario.benf_foto}',
-                    ${beneficiario.benf_parroquia_parr_id},
-                    ${beneficiario.benf_parroquia_municipio_muni_id},
-                    ${beneficiario.benf_parroquia_municipio_estado_estado_id},
+                    ${beneficiario.benf_parroquia_id},
+                    ${beneficiario.benf_municipio_id},
+                    ${beneficiario.benf_estado_id},
                     2,
                     '${beneficiario.benf_fec_nac}',
-                    '${beneficiario.benf_nacionalidad}'
+                    '${beneficiario.benf_document}'
                 )
                 RETURNING *
             ), j AS (
@@ -161,7 +163,7 @@ export class NewRegisterRepository {
                 )
                 RETURNING *
             )
-            SELECT * FROM h;
+            SELECT * FROM j;
         `;
         const [data, ] = await sequelize.query(sqlStatement);
         return data
