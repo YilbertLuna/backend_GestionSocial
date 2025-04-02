@@ -7,12 +7,27 @@ export class NewRegisterRepository {
 
     async register({ beneficiario, req, processStatus, contact, originProcess, newNumberProcess,  aplicationData, dataAplicant, dataLocation, dependencia_id, cedula }) {
         let requisitosValues = '';
-        req.forEach((requisito, index) => {
-            requisitosValues += `( ${requisito.requ_id}, '${requisito.depe_id}', '${requisito.id_ayuda}', '${requisito.id_area}', (SELECT tram_id FROM a))`;
-            if (index < req.length - 1) {
-                requisitosValues += ', ';
-            }
-        });
+        if (req && req.length > 0) {
+            req.forEach((requisito, index) => {
+                requisitosValues += `( ${requisito.requ_id}, '${requisito.depe_id}', '${requisito.id_ayuda}', '${requisito.id_area}', (SELECT tram_id FROM a))`;
+                if (index < req.length - 1) {
+                    requisitosValues += ', ';
+                }
+            });
+        }
+    
+        const requisitosInsert = req && req.length > 0 ? `
+            , g AS (
+                INSERT INTO depen_serv_requi_tramites (
+                    requisitos_requ_id,
+                    depe_serv_depe_id,
+                    depe_serv_id,
+                    servicios_area_id,
+                    tramites_tram_id
+                ) VALUES ${requisitosValues}
+                RETURNING *
+            )
+        ` : '';
 
         const sqlStatement = `
             WITH a AS (
@@ -105,16 +120,8 @@ export class NewRegisterRepository {
                     
                 )
                 RETURNING *
-            ), g AS (
-                INSERT INTO depen_serv_requi_tramites (
-                    requisitos_requ_id,
-                    depe_serv_depe_id,
-                    depe_serv_id,
-                    servicios_area_id,
-                    tramites_tram_id
-                ) VALUES ${requisitosValues}
-                RETURNING *
-            ), h AS (
+            ) ${requisitosInsert}
+            , h AS (
                 INSERT INTO status_tramites VALUES (
                     (SELECT tram_id FROM a),
                     NOW(),
