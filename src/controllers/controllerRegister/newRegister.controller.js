@@ -39,7 +39,6 @@ export const newRregisterController = async (req, res) => {
             return res.status(400).json({message: error.message})
         }
         else {
-            console.log(error.message)
             return res.status(500).json({message: `internal server error: ${error.message}`})
         }
     }
