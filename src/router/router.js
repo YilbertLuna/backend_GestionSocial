@@ -13,6 +13,7 @@ import { referido } from "../controllers/requeriments/referido.controller.js";
 import { getEstado } from "../controllers/localidad/getEstado.controller.js";
 import { getMunicipions } from "../controllers/localidad/getMunicipio.controller.js";
 import { getParroquia } from "../controllers/localidad/getParroquia.controller.js";
+import { searchPersonsController } from "../controllers/searchPersons/searchPersons.Controller.js";
 
 const router = Router();
 
@@ -34,5 +35,8 @@ router.get("/referido", verifyTokenMiddleware, referido)
 router.get("/estado", verifyTokenMiddleware, getEstado)
 router.post("/municipio", verifyTokenMiddleware, getMunicipions)
 router.post("/parroquia", verifyTokenMiddleware, getParroquia)
+
+// router for search persons
+router.post("/searchPersons", verifyTokenMiddleware, searchPersonsController)
 
 export default router
