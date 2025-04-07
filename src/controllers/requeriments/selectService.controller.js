@@ -1,4 +1,4 @@
-import { GetRequeriments } from "../../repository/getRqueriments.Repository.js";
+import { GetRequeriments } from "../../repository/getRequerimentsRepository.js";
 
 const getR = new GetRequeriments()
 

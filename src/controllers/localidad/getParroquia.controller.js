@@ -1,4 +1,4 @@
-import { GetLocation } from "../../repository/getLocation.Repository.js"
+import { GetLocation } from "../../repository/getLocationRepository.js"
 
 const getLocation = new GetLocation()
 
