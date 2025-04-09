@@ -14,6 +14,7 @@ import { getEstado } from "../controllers/localidad/getEstado.controller.js";
 import { getMunicipions } from "../controllers/localidad/getMunicipio.controller.js";
 import { getParroquia } from "../controllers/localidad/getParroquia.controller.js";
 import { searchPersonsController } from "../controllers/searchPersons/searchPersons.Controller.js";
+import { searchTramiteController } from "../controllers/searchTramite/searchTramite.controller.js";
 
 const router = Router();
 
@@ -23,6 +24,7 @@ router.post("/logout", logoutController)
 router.get("/home", verifyTokenMiddleware, home)
 
 // routers for register
+// agregar validatorBody()
 router.post("/newRegister", verifyTokenMiddleware, newRregisterController)
 
 // router for get requeriments
@@ -38,5 +40,8 @@ router.post("/parroquia", verifyTokenMiddleware, getParroquia)
 
 // router for search persons
 router.post("/searchPersons", verifyTokenMiddleware, searchPersonsController)
+
+// router for seatch tramite
+router.post("/searchTramite", verifyTokenMiddleware, searchTramiteController)
 
 export default router
