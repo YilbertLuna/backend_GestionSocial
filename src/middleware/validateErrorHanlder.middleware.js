@@ -6,7 +6,8 @@ import {
     UndefinedData,
     PersonIsExist,
     InvalidCode,
-    VerifyInitialLettersInRange
+    VerifyInitialLettersInRange,
+    PersonIsNotExist
 } from "./errorHandler.middleware.js";
 
 export function validateUserLogin (userLogin) {
@@ -47,7 +48,12 @@ export function validateCode (newNumber, numInitial, lastNumber) {
 
 export function validateLettersRange (currentLetters, initialsDependencyLetters, lastDependencesLetters) {
     if (currentLetters !== initialsDependencyLetters || currentLetters !== lastDependencesLetters) {
-        console.log(currentLetters, initialsDependencyLetters, currentLetters, lastDependencesLetters)
         throw new VerifyInitialLettersInRange();
+    }
+}
+
+export function personIsNotExist (person) {
+    if(person.length === 0) {
+        throw new PersonIsNotExist()
     }
 }
