@@ -7,7 +7,7 @@ import {
     PersonIsExist,
     InvalidCode,
     VerifyInitialLettersInRange,
-    PersonIsNotExist
+    NotFound
 } from "./errorHandler.middleware.js";
 
 export function validateUserLogin (userLogin) {
@@ -52,8 +52,8 @@ export function validateLettersRange (currentLetters, initialsDependencyLetters,
     }
 }
 
-export function personIsNotExist (person) {
+export function searchNotFound (person) {
     if(person.length === 0) {
-        throw new PersonIsNotExist()
+        throw new NotFound()
     }
 }

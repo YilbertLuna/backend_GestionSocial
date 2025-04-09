@@ -1,4 +1,4 @@
-import { PersonIsNotExist } from "../../middleware/errorHandler.middleware.js"
+import { NotFound } from "../../middleware/errorHandler.middleware.js"
 import { searchPersons } from "../../services/searchPerson.services.js"
 
 export const searchPersonsController = async (req, res) => {
@@ -10,7 +10,7 @@ export const searchPersonsController = async (req, res) => {
 
         return res.status(200).json(data)
     } catch (error) {
-        if(error instanceof PersonIsNotExist) {
+        if(error instanceof NotFound) {
             return res.status(400).json({message: error.message})
         }
         return res.status(500).json({message: `internal server error: ${error.message}`})

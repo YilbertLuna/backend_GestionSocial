@@ -12,7 +12,7 @@ export class UserRepository {
         dependencias.depe_nombre
       FROM usuarios
       INNER JOIN permisos ON usuarios.usua_cedula = permisos.usuarios_usua_cedula
-      inner join dependencias ON usuarios.dependencias_depe_id = dependencias.depe_id
+      INNER JOIN dependencias ON usuarios.dependencias_depe_id = dependencias.depe_id
       WHERE 
         usuarios.usua_login = '${username}'
         AND usuarios.status = 'A'

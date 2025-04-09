@@ -61,9 +61,9 @@ export class VerifyInitialLettersInRange extends Error {
     }
 }
 
-export class PersonIsNotExist extends Error {
+export class NotFound extends Error {
     constructor() {
-        super("this person not exist")
-        this.name = "PersonIsNotExist"
+        super("not results")
+        this.name = "NotFound"
     }
 }
