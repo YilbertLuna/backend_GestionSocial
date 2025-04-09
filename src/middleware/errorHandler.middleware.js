@@ -60,3 +60,10 @@ export class VerifyInitialLettersInRange extends Error {
         this.name = "verifyInitialLettersInRange"
     }
 }
+
+export class PersonIsNotExist extends Error {
+    constructor() {
+        super("this person not exist")
+        this.name = "PersonIsNotExist"
+    }
+}
