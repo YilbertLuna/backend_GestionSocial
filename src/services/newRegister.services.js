@@ -140,7 +140,6 @@ const benef = (isAplicantBeneficiary, dataAplicant, beneficiaryData, dataLocatio
             "benf_nombres": dataAplicant.pers_nombres,
             "benf_cedula": dataAplicant.pers_cedula,
             "benf_direccion": dataLocation.Direccion || null, // Manejar valores opcionales
-            "benf_foto": dataAplicant.pers_foto,
             "benf_parroquia_id": dataLocation.parroquia_id || null,
             "benf_municipio_id": dataLocation.municipio_id || null,
             "benf_estado_id": dataLocation.estado_id || null,
@@ -153,7 +152,6 @@ const benef = (isAplicantBeneficiary, dataAplicant, beneficiaryData, dataLocatio
             "benf_nombres": beneficiaryData.benf_nombres,
             "benf_cedula": beneficiaryData.benf_cedula,
             "benf_direccion": beneficiaryData.benf_direccion,
-            "benf_foto": "foto",
             "benf_parroquia_id": beneficiaryData.benf_parroquia || null,
             "benf_municipio_id": beneficiaryData.benf_municipio || null,
             "benf_estado_id": beneficiaryData.benf_estado || null,
