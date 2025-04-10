@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { loginController } from "../controllers/controllerUser/login.controller.js";
 import { logoutController } from "../controllers/controllerUser/logout.controller.js";
-import { loginSchema } from "../schemas/validateSchema.js";
+import { loginSchema, newProcessSchema } from "../schemas/validateSchema.js";
 import { validatorBody } from "../middleware/validateBodyRequest.js";
 import { verifyTokenMiddleware } from "../middleware/verifyToken.middleware.js";
 import { home } from "../controllers/controllerUser/home.controller.js";
@@ -24,8 +24,7 @@ router.post("/logout", logoutController)
 router.get("/home", verifyTokenMiddleware, home)
 
 // routers for register
-// agregar validatorBody()
-router.post("/newRegister", verifyTokenMiddleware, newRregisterController)
+router.post("/newRegister", verifyTokenMiddleware, validatorBody(newProcessSchema), newRregisterController)
 
 // router for get requeriments
 router.get("/selectArea", verifyTokenMiddleware, selectArea)
