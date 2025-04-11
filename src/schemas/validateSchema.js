@@ -53,7 +53,7 @@ export const newProcessSchema = z.object({
     benf_parroquia: z.number({
       required_error: "benf_parroquia is required"
     })
-  }),
+  }).partial().optional().nullable(),
   dataAplicant: z.object({
     pers_apellidos: z.string({
       required_error: "pers_apellidos is required"
