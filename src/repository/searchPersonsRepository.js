@@ -6,7 +6,7 @@ export class SearchPersons {
     }
 
     async search(person) {
-        const query = `SELECT p.pers_apellidos, p.pers_nombres, p.pers_cedula, p.tipo_persona_tipo_pers_id
+        const query = `SELECT p.pers_apellidos, p.pers_nombres, p.pers_cedula, p.tipo_persona_tipo_pers_id, p.pers_id
             FROM personas p 
             WHERE
                 p.pers_cedula::text LIKE :searchParam
