@@ -15,6 +15,7 @@ import { getMunicipions } from "../controllers/localidad/getMunicipio.controller
 import { getParroquia } from "../controllers/localidad/getParroquia.controller.js";
 import { searchPersonsController } from "../controllers/searchPersons/searchPersons.Controller.js";
 import { searchTramiteController } from "../controllers/searchTramite/searchTramite.controller.js";
+import { showDataProcessController } from "../controllers/showData/showDataProcess.controller.js";
 
 const router = Router();
 
@@ -42,5 +43,8 @@ router.post("/searchPersons", verifyTokenMiddleware, searchPersonsController)
 
 // router for seatch tramite
 router.post("/searchTramite", verifyTokenMiddleware, searchTramiteController)
+
+// router for show data
+router.get("/showDataProcess/:id_tram", verifyTokenMiddleware, showDataProcessController)
 
 export default router
