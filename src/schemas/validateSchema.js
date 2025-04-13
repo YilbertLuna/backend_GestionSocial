@@ -25,9 +25,7 @@ export const newProcessSchema = z.object({
     benf_direccion: z.string().min(1, "benf_direccion is required"),
     benf_document: z.string().min(1, "benf_document is required"),
     benf_estado: z.number().min(1, "benf_estado is required"),
-    benf_fec_nac: z.string()
-      .min(1, "benf_fec_nac is required")
-      .regex(/^\d{4}-\d{2}-\d{2}$/, "pers_fec_nac must be a valid date (YYYY-MM-DD)"),
+    benf_fec_nac: z.string().optional(),
     benf_municipio: z.number().min(1, "benf_municipio is required"),
     benf_nombres: z.string().min(1, "benf_nombres is required"),
     benf_parroquia: z.number().min(1, "benf_parroquia is required")
