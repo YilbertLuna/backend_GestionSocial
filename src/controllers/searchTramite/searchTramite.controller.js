@@ -3,6 +3,8 @@ import { NotFound } from "../../middleware/errorHandler.middleware.js"
 
 export const searchTramiteController = async (req, res) => {
     try {
+        res.set("Content-Type", "application/json");
+
         const { tramite } = req.body
 
         const data = await searchTramites(tramite)
