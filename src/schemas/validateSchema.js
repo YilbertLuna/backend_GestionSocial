@@ -61,5 +61,5 @@ export const newProcessSchema = z.object({
     requ_id: z.number().min(1, "requi_id is required"),
     requi_cantidad: z.number().min(1, "requi_cantidad is required"),
     requi_obligatorio: z.boolean()
-  })).min(1, "At least one requirement is needed")
+  }).optional())
 });
