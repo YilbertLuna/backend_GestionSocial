@@ -43,4 +43,34 @@ export class SearchTramite {
 
         return data 
     }
+
+    async searchTramitesForUpdate (search, dependencia_id) {
+        const query = `
+            SELECT DISTINCT ON (tr.id_tramite)
+                tr.id_tramite,
+                tr.nro_tramite,
+                tr.id_dependencia,
+                p.pers_apellidos,
+                p.pers_nombres,
+                p.pers_cedula
+            FROM 
+                tramite_rangos tr
+            INNER JOIN 
+                personas_tramites pt ON tr.id_tramite = pt.tramites_tram_id
+            INNER JOIN 
+                personas p ON pt.personas_pers_id = p.pers_id
+            WHERE 
+                tr.nro_tramite::text ILIKE :searchParam
+                AND tr.id_dependencia = ${dependencia_id}
+            LIMIT 10;
+        `
+        const data = await sequelize.query(query, {
+            replacements: {
+                searchParam: `%${search}%`
+            },
+            type: sequelize.QueryTypes.SELECT
+        });
+
+        return data 
+    }
 }

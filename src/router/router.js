@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { loginController } from "../controllers/controllerUser/login.controller.js";
 import { logoutController } from "../controllers/controllerUser/logout.controller.js";
-import { loginSchema, newProcessSchema } from "../schemas/validateSchema.js";
+import { loginSchema, newProcessSchema, selectProcessSchema, updateProcessSchema } from "../schemas/validateSchema.js";
 import { validatorBody } from "../middleware/validateBodyRequest.js";
 import { verifyTokenMiddleware } from "../middleware/verifyToken.middleware.js";
 import { home } from "../controllers/controllerUser/home.controller.js";
@@ -17,6 +17,10 @@ import { searchPersonsController } from "../controllers/searchPersons/searchPers
 import { searchTramiteController } from "../controllers/searchTramite/searchTramite.controller.js";
 import { showDataProcessController } from "../controllers/showData/showDataProcess.controller.js";
 import { AplicantInfoController } from "../controllers/AplicantInfo/aplicantInfo.controller.js";
+import { selectStatusController } from "../controllers/changeStatus/selectStatus.controller.js";
+import { changeStatusController } from "../controllers/changeStatus/changeStatus.controller.js";
+import { selectProcessController } from "../controllers/changeStatus/selectProcess.controller.js";
+import { showProcessBeforeUpdateController } from "../controllers/changeStatus/showProcessBeforeUpdate.controller.js";
 
 const router = Router();
 
@@ -48,5 +52,12 @@ router.post("/searchTramite", verifyTokenMiddleware, searchTramiteController)
 // router for show data
 router.get("/showDataProcess/:id_tram", verifyTokenMiddleware, showDataProcessController)
 router.get("/aplicantDataInfo/:person", verifyTokenMiddleware, AplicantInfoController)
+
+// router for change status process
+// este tambien necesita un validator schema
+router.post("/selectProcess", verifyTokenMiddleware, validatorBody(selectProcessSchema), selectProcessController)
+router.get("/dataProcess/:id_tram", verifyTokenMiddleware, showProcessBeforeUpdateController)
+router.get("/selectStatus", verifyTokenMiddleware, selectStatusController)
+router.put("/changeStatus", verifyTokenMiddleware, validatorBody(updateProcessSchema), changeStatusController)
 
 export default router
