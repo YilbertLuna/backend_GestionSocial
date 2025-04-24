@@ -63,3 +63,22 @@ export const newProcessSchema = z.object({
     requi_obligatorio: z.boolean()
   }).optional())
 });
+
+export const updateProcessSchema = z.object({
+  id_process: z.number({
+    required_error: "id_process is required"
+  }),
+  id_new_status: z.string({
+    required_error: "id_new_status is required"
+  }),
+  status_observation: z.string({
+    required_error: "status_observation is required"
+  }),
+  totalAmount: z.number().min(0, "monto must be a positive number").optional()
+})
+
+export const selectProcessSchema = z.object({
+  nro_tramite: z.string({
+    required_error: "nro_tramite is required"
+  })
+})

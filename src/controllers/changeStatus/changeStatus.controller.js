@@ -1,0 +1,14 @@
+import { changeProcess } from "../../services/changeStatus.services.js";
+
+export const changeStatusController = async (req, res) => {
+    try {
+        res.set("Content-Type", "application/json");
+        const { id_process, id_new_status, status_observation, totalAmount } = req.body;
+        const {cedula} = req.User
+        console.log(cedula)
+        await changeProcess({ id_process, id_new_status, cedula, status_observation, totalAmount });
+        return res.status(200).json("Status updated successfully");
+    } catch (error) {
+        return res.status(500).json({error: error.message});
+    }
+}
