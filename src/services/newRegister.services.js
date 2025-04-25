@@ -1,5 +1,8 @@
 import { validateCode, validateLettersRange, validatePersonIsExist } from "../middleware/validateErrorHanlder.middleware.js"
 import { NewRegisterRepository } from "../repository/newRegisterRepository.js"
+import { generateQRCode } from "./generateQrCode.services.js"
+import fs from "fs"
+import path from "path"
 
 const newRegister = new NewRegisterRepository()
 
@@ -19,6 +22,11 @@ export const newRegisterService = async (
     const contact = await contactPerson(dataLocation)
     const [req, [processStatus]] = reque(requeriments)
     const [beneficiario] = benef(isAplicantBeneficiary, dataAplicant, beneficiaryData, dataLocation)
+
+    // obtener los datos para generar el codigo qr
+    const qrData = `Numero de Tramite: ${newNumberProcess}`;
+    const qrFilename = newNumberProcess;
+    await generateQRCode(qrData, qrFilename);
 
     await newRegister.register({ 
         beneficiario, 
