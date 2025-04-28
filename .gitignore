@@ -146,5 +146,6 @@ package-lock.json
 
 # carpetas generadas por el sistema
 qrcodes/
+generatedPDF/
 
 # End of https://www.toptal.com/developers/gitignore/api/node
