@@ -16,6 +16,18 @@ export const generateQRCode = async (data, filename) => {
             width: 300,
             margin: 2,
         });
+
+        // elimina el archivo QR, si es necesario que no se elimine, comentar el siguiente bloque
+        setTimeout(() => {
+            fs.unlink(qrPath, (unlinkErr) => {
+                if (unlinkErr) {
+                    console.error(`Error al eliminar el archivo QR: ${unlinkErr}`);
+                } else {
+                    console.log(`Archivo QR ${qrPath} eliminado correctamente después de 20 segundos.`);
+                }
+            });
+        }, 1000);
+
         return qrPath;
     } catch (error) {
         throw new Error(`Error generating QR code: ${error.message}`);
