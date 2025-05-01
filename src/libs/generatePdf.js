@@ -59,11 +59,13 @@ export const generatePdf = async (dataInfo, requisitosConsignados, requisitosNoC
   doc.moveDown();
 
   // Requisitos No Consignados
-  doc.fontSize(10).text("Requisitos No Consignados", { underline: true });
-  requisitosNoConsignados.forEach((req, index) => {
-    doc.fontSize(8).text(`${index + 1}. ${req.requ_descripcion}`);
-  });
-  doc.moveDown();
+  if (requisitosNoConsignados.length > 0) {
+    doc.fontSize(10).text("Requisitos No Consignados", { underline: true });
+    requisitosNoConsignados.forEach((req, index) => {
+      doc.fontSize(8).text(`${index + 1}. ${req.requ_descripcion}`);
+    });
+    doc.moveDown();
+  }
 
   // Pie de página
   doc.fontSize(8).fillColor("red").text("La generación de esta solicitud NO implica su aprobación.", { align: "center" });

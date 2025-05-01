@@ -64,6 +64,48 @@ export const newProcessSchema = z.object({
   }).optional())
 });
 
+export const anotherProcessSchema = z.object({
+  aplicationData: z.object({
+    description: z.string().min(1, "description is required"),
+    monto: z.number().min(0, "monto must be a positive number"),
+    referido: z.string().min(1, "referido is required")
+  }),
+  beneficiaryData: z.object({
+    benf_apellidos: z.string().min(1, "benf_apellidos is required"),
+    benf_cedula: z.string().min(1, "benf_cedula is required"),
+    benf_direccion: z.string().min(1, "benf_direccion is required"),
+    benf_document: z.string().min(1, "benf_document is required"),
+    benf_estado: z.number().min(1, "benf_estado is required"),
+    benf_fec_nac: z.string().optional(),
+    benf_municipio: z.number().min(1, "benf_municipio is required"),
+    benf_nombres: z.string().min(1, "benf_nombres is required"),
+    benf_parroquia: z.number().min(1, "benf_parroquia is required")
+  }).partial().optional().nullable(),
+  dataAplicant: z.object({
+    pers_apellidos: z.string().min(1, "pers_apellidos is required"),
+    pers_cedula: z.string().min(1, "pers_cedula is required"),
+    pers_document: z.string().min(1, "pers_document is required"),
+    pers_fec_nac: z.string()
+      .min(1, "pers_fec_nac is required")
+      .regex(/^\d{4}-\d{2}-\d{2}$/, "pers_fec_nac must be a valid date (YYYY-MM-DD)"),
+    pers_nombres: z.string().min(1, "pers_nombres is required")
+  }),
+  isAplicantBeneficiary: z.enum(["SI", "NO"], {
+    required_error: "isAplicantBeneficiary is required",
+    invalid_type_error: "isAplicantBeneficiary must be 'SI' or 'NO'"
+  }),
+  requeriments: z.array(z.object({
+    depe_id: z.number().min(1, "depe_id is required"),
+    estatus: z.string().min(1, "estatus is required"),
+    id_area: z.string().min(1, "area is required"),
+    id_ayuda: z.string().min(1, "ayuda is required"),
+    requ_descripcion: z.string().min(1, "requ_descripcion is required"),
+    requ_id: z.number().min(1, "requi_id is required"),
+    requi_cantidad: z.number().min(1, "requi_cantidad is required"),
+    requi_obligatorio: z.boolean()
+  }).optional())
+})
+
 export const updateProcessSchema = z.object({
   id_process: z.number({
     required_error: "id_process is required"
