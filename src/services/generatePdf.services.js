@@ -8,7 +8,7 @@ export const generatePdfService = async (personId, tramiteId) => {
   // Obtén los datos de la persona y del trámite
   const dataInfo = await data.getData(personId, tramiteId);
   const requisitosConsignados = await data.getRequisitosConsignados(tramiteId); 
-  const requisitosNoConsignados = await data.getRequisitosNoConsignados(dataInfo[0].id_dependencia, dataInfo[0].serv_id, dataInfo[0].areas_area_id);
+  const requisitosNoConsignados = await data.getRequisitosNoConsignados(tramiteId);
 
   // Genera el código QR con el número del trámite
   const qrData = `Numero de Tramite: ${dataInfo[0].nro_tramite}`;

@@ -53,7 +53,7 @@ export function validateLettersRange (currentLetters, initialsDependencyLetters,
 }
 
 export function searchNotFound (person) {
-    if(person.length === 0) {
+    if(person === undefined || person.length === 0) {
         throw new NotFound()
     }
 }

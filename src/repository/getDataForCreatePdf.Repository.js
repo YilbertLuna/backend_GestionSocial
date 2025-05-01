@@ -94,23 +94,43 @@ export class DataForPdf {
         return data
     }
 
-    async getRequisitosNoConsignados(depe_id, serv_id, area_id) {
+    async getRequisitosNoConsignados(tramiteId) {
         const query = `
-            SELECT DISTINCT 
-                requ_id,
-                requi_estatus,
-                requ_descripcion,
-                requi_cantidad,
-                requi_obligatorio,
-                depe_serv_depe_id,
-                depe_serv_id,
-                depe_servicios_area_id 
-            FROM depen_serv_requi
-            JOIN requisitos ON requisitos_requ_id = requ_id
-            WHERE depe_serv_depe_id = ${depe_id}
-                AND depe_serv_id = ${serv_id}
-                AND depe_servicios_area_id = ${area_id}
-                AND requi_estatus = 'A';
+            WITH requisitos_consignados AS (
+                SELECT DISTINCT requisitos_requ_id 
+                FROM depen_serv_requi_tramites 
+                WHERE tramites_tram_id = ${tramiteId}
+            ),
+            configuracion_tramite AS (
+                SELECT DISTINCT
+                    depe_serv_depe_id,
+                    depe_serv_id,
+                    servicios_area_id
+                FROM depen_serv_requi_tramites
+                WHERE tramites_tram_id = ${tramiteId}
+            )
+            SELECT DISTINCT
+                r.requ_id,
+                r.requ_descripcion,
+                dsr.requi_obligatorio,
+                dsr.requi_cantidad
+            FROM 
+                configuracion_tramite ct
+            JOIN 
+                depen_serv_requi dsr ON 
+                    dsr.depe_serv_depe_id = ct.depe_serv_depe_id AND
+                    dsr.depe_serv_id = ct.depe_serv_id AND
+                    dsr.depe_servicios_area_id = ct.servicios_area_id
+            JOIN 
+                requisitos r ON dsr.requisitos_requ_id = r.requ_id
+            WHERE 
+                dsr.requi_estatus = 'A'
+                AND NOT EXISTS (
+                    SELECT 1 FROM requisitos_consignados rc 
+                    WHERE rc.requisitos_requ_id = r.requ_id
+                )
+            ORDER BY 
+                r.requ_id
         `
         const [data, ] = await this.sequelize.query(query)
         return data
