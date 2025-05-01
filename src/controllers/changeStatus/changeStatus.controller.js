@@ -5,7 +5,6 @@ export const changeStatusController = async (req, res) => {
         res.set("Content-Type", "application/json");
         const { id_process, id_new_status, status_observation, totalAmount } = req.body;
         const {cedula} = req.User
-        console.log(cedula)
         await changeProcess({ id_process, id_new_status, cedula, status_observation, totalAmount });
         return res.status(200).json("Status updated successfully");
     } catch (error) {
