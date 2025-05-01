@@ -23,7 +23,7 @@ export const newRregisterController = async (req, res) => {
             isAplicantBeneficiary,
             requeriments,
             dependencia_id,
-            cedula,
+            cedula
         )
 
         res.status(200).json('register completed')
