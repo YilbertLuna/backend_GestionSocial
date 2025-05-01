@@ -22,6 +22,8 @@ import { changeStatusController } from "../controllers/changeStatus/changeStatus
 import { selectProcessController } from "../controllers/changeStatus/selectProcess.controller.js";
 import { showProcessBeforeUpdateController } from "../controllers/changeStatus/showProcessBeforeUpdate.controller.js";
 import { generatePdfController } from "../controllers/generatePdf/generatePdf.controller.js";
+import { getDataPersonController } from "../controllers/dataPerson/dataPerson.controller.js";
+import { newProcessController } from "../controllers/newProcess/newProcess.controller.js";
 
 const router = Router();
 
@@ -61,7 +63,10 @@ router.get("/selectStatus", verifyTokenMiddleware, selectStatusController)
 router.put("/changeStatus", verifyTokenMiddleware, validatorBody(updateProcessSchema), changeStatusController)
 
 // router for generate pdf
-// este tambien necesita un validator schema
-router.get("/generatePdf/:personId/:tramiteId", generatePdfController);
+router.get("/generatePdf/:personId/:tramiteId", verifyTokenMiddleware, generatePdfController);
+
+// router for get data person for new process
+router.get("/getDataPerson/:personId", verifyTokenMiddleware, getDataPersonController)
+router.post("/newProcess", verifyTokenMiddleware, newProcessController)
 
 export default router

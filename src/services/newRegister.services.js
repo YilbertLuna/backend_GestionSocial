@@ -1,9 +1,5 @@
 import { validateCode, validateLettersRange, validatePersonIsExist } from "../middleware/validateErrorHanlder.middleware.js"
 import { NewRegisterRepository } from "../repository/newRegisterRepository.js"
-import { generateQRCode } from "./generateQrCode.services.js"
-import fs from "fs"
-import path from "path"
-
 const newRegister = new NewRegisterRepository()
 
 export const newRegisterService = async (
@@ -14,7 +10,7 @@ export const newRegisterService = async (
     isAplicantBeneficiary,
     requeriments,
     dependencia_id,
-    cedula,
+    cedula
     ) => {
     await validatePerson({ dataAplicant });
     const newNumberProcess = await generateCodeProcess(dependencia_id)
@@ -22,11 +18,6 @@ export const newRegisterService = async (
     const contact = await contactPerson(dataLocation)
     const [req, [processStatus]] = reque(requeriments)
     const [beneficiario] = benef(isAplicantBeneficiary, dataAplicant, beneficiaryData, dataLocation)
-
-    // obtener los datos para generar el codigo qr
-    const qrData = `Numero de Tramite: ${newNumberProcess}`;
-    const qrFilename = newNumberProcess;
-    await generateQRCode(qrData, qrFilename);
 
     await newRegister.register({ 
         beneficiario, 
@@ -40,6 +31,36 @@ export const newRegisterService = async (
         dataLocation,
         dependencia_id,
         cedula
+    });
+}
+
+export const newProcess = async (
+    aplicationData,
+    beneficiaryData,
+    dataAplicant,
+    dataLocation,
+    isAplicantBeneficiary,
+    requeriments,
+    dependencia_id,
+    cedula
+    ) => {
+    const newNumberProcess = await generateCodeProcess(dependencia_id)
+    const originProcess = await idOriginProcess(aplicationData)
+    const [req, [processStatus]] = reque(requeriments)
+    const [beneficiario] = benef(isAplicantBeneficiary, dataAplicant, beneficiaryData, dataLocation)
+
+    await newRegister.newProcessToPerson({
+        req,
+        originProcess,
+        processStatus,
+        aplicationData,
+        cedula,
+        dataAplicant,
+        newNumberProcess,
+        dependencia_id,
+        dataLocation,
+        beneficiario,
+        isAplicantBeneficiary
     });
 }
 
@@ -128,7 +149,7 @@ const reque = (requeriments) => {
         }
     }
 
-    if(reqfaltante === 0) {
+    if(reqfaltante === 0 || reqfaltante.length === 0) {
         processStatus = 2 // todos los requisitos estan completos
     } else {
         processStatus = 1 // faltan requistos
@@ -147,7 +168,7 @@ const benef = (isAplicantBeneficiary, dataAplicant, beneficiaryData, dataLocatio
             "benf_apellidos": dataAplicant.pers_apellidos,
             "benf_nombres": dataAplicant.pers_nombres,
             "benf_cedula": dataAplicant.pers_cedula,
-            "benf_direccion": dataLocation.Direccion || null, // Manejar valores opcionales
+            "benf_direccion": dataLocation.Direccion || null,
             "benf_parroquia_id": dataLocation.parroquia_id || null,
             "benf_municipio_id": dataLocation.municipio_id || null,
             "benf_estado_id": dataLocation.estado_id || null,
