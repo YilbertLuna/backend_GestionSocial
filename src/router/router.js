@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { loginController } from "../controllers/controllerUser/login.controller.js";
 import { logoutController } from "../controllers/controllerUser/logout.controller.js";
-import { loginSchema, newProcessSchema, selectProcessSchema, updateProcessSchema } from "../schemas/validateSchema.js";
+import { anotherProcessSchema, loginSchema, newProcessSchema, selectProcessSchema, updateProcessSchema } from "../schemas/validateSchema.js";
 import { validatorBody } from "../middleware/validateBodyRequest.js";
 import { verifyTokenMiddleware } from "../middleware/verifyToken.middleware.js";
 import { home } from "../controllers/controllerUser/home.controller.js";
@@ -67,6 +67,6 @@ router.get("/generatePdf/:personId/:tramiteId", verifyTokenMiddleware, generateP
 
 // router for get data person for new process
 router.get("/getDataPerson/:personId", verifyTokenMiddleware, getDataPersonController)
-router.post("/newProcess", verifyTokenMiddleware, newProcessController)
+router.post("/newProcess", verifyTokenMiddleware, validatorBody(anotherProcessSchema), newProcessController)
 
 export default router

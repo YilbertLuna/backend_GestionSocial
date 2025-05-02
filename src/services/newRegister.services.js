@@ -12,7 +12,8 @@ export const newRegisterService = async (
     dependencia_id,
     cedula
     ) => {
-    await validatePerson({ dataAplicant });
+    await validatePerson( dataAplicant );
+    await validatePerson( beneficiaryData )
     const newNumberProcess = await generateCodeProcess(dependencia_id)
     const originProcess = await idOriginProcess(aplicationData)
     const contact = await contactPerson(dataLocation)
@@ -44,6 +45,9 @@ export const newProcess = async (
     dependencia_id,
     cedula
     ) => {
+    if (isAplicantBeneficiary === 'NO') {
+        await validatePerson( beneficiaryData )
+    }
     const newNumberProcess = await generateCodeProcess(dependencia_id)
     const originProcess = await idOriginProcess(aplicationData)
     const [req, [processStatus]] = reque(requeriments)
@@ -64,9 +68,11 @@ export const newProcess = async (
     });
 }
 
-const validatePerson = async({ dataAplicant }) => {
-    const person = await newRegister.findPerson(dataAplicant.pers_cedula);
+const validatePerson = async( dataPerson ) => {
+    const person = await newRegister.findPerson(dataPerson.pers_cedula);
+    const personBeneficiary = await newRegister.findPerson(dataPerson.benf_cedula);
     validatePersonIsExist(person)
+    validatePersonIsExist(personBeneficiary)
 }
 
 const generateCodeProcess = async (dependencia_id) => {

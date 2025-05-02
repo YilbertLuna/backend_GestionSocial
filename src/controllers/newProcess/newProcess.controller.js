@@ -1,4 +1,5 @@
 import { newProcess } from "../../services/newRegister.services.js";
+import { PersonIsExist, InvalidCode, VerifyInitialLettersInRange } from "../../middleware/errorHandler.middleware.js";
 
 export const newProcessController = async (req, res) => {
     try {
@@ -27,6 +28,17 @@ export const newProcessController = async (req, res) => {
 
         return res.status(200).json({message: "New process created successfully"});
     } catch (error) {
+        if(error instanceof PersonIsExist) {
+            return res.status(400).json({message: error.message})
+        }
+        if(error instanceof InvalidCode) {
+            return res.status(400).json({message: error.message})
+        }
+        if(error instanceof VerifyInitialLettersInRange) {
+            return res.status(400).json({message: error.message})
+        }
+        else {
             return res.status(500).json({message: `internal server error: ${error.message}`})
+        }
     }
 }
