@@ -42,7 +42,7 @@ export class UndefinedData extends Error {
 
 export class PersonIsExist extends Error {
     constructor() {
-        super("this person already exists")
+        super("This person or beneficiary already exists")
         this.name = "PersonIsExist"
     }
 }

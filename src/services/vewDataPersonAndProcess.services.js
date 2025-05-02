@@ -1,16 +1,24 @@
 import { GetAplicantInforData } from "../repository/getAplicantInfoData.js";
+import { decodeEntities } from "../utils/decodeEntitis.js";
 const getData = new GetAplicantInforData()
 
 export const vewDataPersonAndProcess = async (person) => {
     const dataPerson = await getData.getDataPerson(person)
     const process = await getData.getDataProcress(person)
 
-    const dataProcess = transformarTramites(process)
-    const data = {
-        dataPerson: dataPerson,
-        dataProcess: dataProcess
-    }
-    return data
+    const decodeHelpProcess = process.map(data => ({
+      ...data,
+      serv_descripcion: data.serv_descripcion 
+          ? decodeEntities(data.serv_descripcion) 
+          : data.serv_descripcion
+  }));
+
+  const dataProcess = transformarTramites(decodeHelpProcess);
+  const data = {
+      dataPerson: dataPerson,
+      dataProcess: dataProcess
+  };
+  return data;
 }
 
 function transformarTramites(datosOriginales) {

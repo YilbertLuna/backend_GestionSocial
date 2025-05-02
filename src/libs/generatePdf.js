@@ -1,6 +1,7 @@
 import PDFDocument from "pdfkit";
 import fs from "fs";
 import path from "path";
+import { decodeEntities } from "../utils/decodeEntitis.js";
 
 export const generatePdf = async (dataInfo, requisitosConsignados, requisitosNoConsignados, qrPath) => {
   const generatedPDF = path.resolve("generatedPDF");
@@ -26,7 +27,8 @@ export const generatePdf = async (dataInfo, requisitosConsignados, requisitosNoC
   doc.text(`Apellidos y Nombres del Beneficiario: ${dataInfo[1].pers_apellidos} ${dataInfo[1].pers_nombres}`);
   doc.text(`DEPENDENCIA: ${dataInfo[0].depe_nombre}`);
   doc.text(`ÁREA: ${dataInfo[0].area_descripcion}`);
-  doc.text(`TIPO DE SERVICIO: ${dataInfo[0].serv_descripcion}`);
+  const tipoServicio = decodeEntities(dataInfo[0].serv_descripcion)
+  doc.text(`TIPO DE SERVICIO: ${tipoServicio}`);
   doc.text(`Monto solicitado: ${parseFloat(dataInfo[0].tram_monto).toFixed(2)} Bs`);
   doc.moveDown();
 
@@ -53,7 +55,11 @@ export const generatePdf = async (dataInfo, requisitosConsignados, requisitosNoC
 
   // Requisitos Consignados
   doc.fontSize(10).text("Requisitos Consignados", { underline: true });
-  requisitosConsignados.forEach((req, index) => {
+  const decodedRequiConsignados = requisitosConsignados.map(req => ({
+      ...req,
+      requ_descripcion: decodeEntities(req.requ_descripcion)
+  }));
+  decodedRequiConsignados.forEach((req, index) => {
     doc.fontSize(8).text(`${index + 1}. ${req.requ_descripcion}`);
   });
   doc.moveDown();
@@ -61,7 +67,11 @@ export const generatePdf = async (dataInfo, requisitosConsignados, requisitosNoC
   // Requisitos No Consignados
   if (requisitosNoConsignados.length > 0) {
     doc.fontSize(10).text("Requisitos No Consignados", { underline: true });
-    requisitosNoConsignados.forEach((req, index) => {
+    const decodedRequiNoConsignados = requisitosNoConsignados.map(req => ({
+      ...req,
+      requ_descripcion: decodeEntities(req.requ_descripcion)
+    }));
+    decodedRequiNoConsignados.forEach((req, index) => {
       doc.fontSize(8).text(`${index + 1}. ${req.requ_descripcion}`);
     });
     doc.moveDown();
