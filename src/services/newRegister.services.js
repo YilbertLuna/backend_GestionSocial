@@ -141,7 +141,7 @@ const contactPerson = async (dataLocation) => {
     return object;
 }
 
-const reque = (requeriments) => {
+export const reque = (requeriments) => {
     const i = requeriments.length;
     let reqfaltante = 0;
     let processStatus;

@@ -47,6 +47,7 @@ function transformarTramites(datosOriginales) {
             tram_monto: registro.tram_monto,
             tram_descripcion: registro.tram_descripcion,
             status_fecha: registro.status_fecha,
+            status_id: registro.status_id,
             status_descripcion: registro.status_descripcion,
             status_observacion: registro.status_observacion,
             serv_descripcion: registro.serv_descripcion,
