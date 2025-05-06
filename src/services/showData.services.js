@@ -1,4 +1,5 @@
 import { ShowData } from "../repository/showDataRerpository.js";
+import { decodeEntities } from "../utils/decodeEntitis.js";
 
 const show = new ShowData()
 
@@ -9,5 +10,17 @@ export const showDataProcess = async (id_tram) => {
 
 export const showDataProcessBeforeUpdate = async (id_tram) => {
     const data = await show.showProcessBeforeUpdate(id_tram)
-    return data
+    if(!data.ser_descripcion) {
+        return data;
+    } else {
+        return validateAndDecodeData(data);
+    }
 }
+
+const validateAndDecodeData = (data) => {
+    const decodedService = data.map(serv => ({
+        ...serv,
+        serv_descripcion: decodeEntities(serv.serv_descripcion)
+    }));
+    return decodedService;
+};

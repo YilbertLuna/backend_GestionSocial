@@ -24,6 +24,9 @@ import { showProcessBeforeUpdateController } from "../controllers/changeStatus/s
 import { generatePdfController } from "../controllers/generatePdf/generatePdf.controller.js";
 import { getDataPersonController } from "../controllers/dataPerson/dataPerson.controller.js";
 import { newProcessController } from "../controllers/newProcess/newProcess.controller.js";
+import { requequimentsNoConsignadosController } from "../controllers/requisitosNoConsignados/requisitosNoConsignados.controller.js";
+import { requequimentsConsignadosController } from "../controllers/requisitosConsignados/requisitosConsignado.controller.js";
+import { updateProcessController } from "../controllers/updateProcess/updateProcess.controller.js";
 
 const router = Router();
 
@@ -68,5 +71,11 @@ router.get("/generatePdf/:personId/:tramiteId", verifyTokenMiddleware, generateP
 // router for get data person for new process
 router.get("/getDataPerson/:personId", verifyTokenMiddleware, getDataPersonController)
 router.post("/newProcess", verifyTokenMiddleware, validatorBody(anotherProcessSchema), newProcessController)
+
+// router for edit process
+// requisitos no consignados
+router.get("/requisitosNoConsignados/:tramiteId", verifyTokenMiddleware, requequimentsNoConsignadosController)
+router.get("/requisitosConsignados/:tramiteId", verifyTokenMiddleware, requequimentsConsignadosController)
+router.put("/updateProcess", verifyTokenMiddleware, updateProcessController)
 
 export default router

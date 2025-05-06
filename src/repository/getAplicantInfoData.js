@@ -44,7 +44,7 @@ export class GetAplicantInforData {
 
     async getDataProcress(id_aplicant) {
         const query = `
-            WITH tramites_persona AS (
+           WITH tramites_persona AS (
                 SELECT DISTINCT tr.id_tramite
                 FROM tramite_rangos tr
                 JOIN personas_tramites pt ON tr.id_tramite = pt.tramites_tram_id
@@ -83,6 +83,7 @@ export class GetAplicantInforData {
                     t.tram_descripcion,
                     st_stat.fecha AS status_fecha,
                     st_stat.stat_descripcion AS status_descripcion,
+                    st_stat.status_stat_id AS status_id,  -- Columna agregada aquí
                     st_stat.status_observacion,
                     st.depe_serv_depe_id AS servicio_depe_id,
                     st.serv_descripcion,
@@ -104,6 +105,7 @@ export class GetAplicantInforData {
                             st.fecha,
                             s.stat_descripcion,
                             st.status_observacion,
+                            st.status_stat_id,  -- Columna agregada aquí
                             ROW_NUMBER() OVER (PARTITION BY st.tramites_tram_id ORDER BY st.status_stat_id DESC) AS rn
                         FROM
                             status_tramites st
