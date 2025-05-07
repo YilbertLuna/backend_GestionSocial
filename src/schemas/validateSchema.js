@@ -124,3 +124,16 @@ export const selectProcessSchema = z.object({
     required_error: "nro_tramite is required"
   })
 })
+
+export const editProcessSchema = z.object({
+  requeriments: z.array(z.object({
+    depe_id: z.number().min(1, "depe_id is required"),
+    estatus: z.string().min(1, "estatus is required"),
+    id_area: z.number().min(1, "area is required"),
+    serv_id: z.number().min(1, "ayuda is required"),
+    requ_descripcion: z.string().min(1, "requ_descripcion is required"),
+    requ_id: z.number().min(1, "requi_id is required"),
+    requi_cantidad: z.number().min(1, "requi_cantidad is required"),
+    requi_obligatorio: z.boolean()
+  }).optional())
+})

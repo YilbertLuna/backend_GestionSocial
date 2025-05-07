@@ -9,7 +9,7 @@ export class UpdateProcessRepository {
         let requisitosValues = '';
         if (req && req.length > 0) {
             req.forEach((requisito, index) => {
-                requisitosValues += `( ${requisito.requ_id}, '${requisito.depe_id}', '${requisito.id_ayuda}', '${requisito.id_area}', ${id_tramite})`;
+                requisitosValues += `( ${requisito.requ_id}, '${requisito.depe_id}', '${requisito.serv_id}', '${requisito.id_area}', ${id_tramite})`;
                 if (index < req.length - 1) {
                     requisitosValues += ', ';
                 }

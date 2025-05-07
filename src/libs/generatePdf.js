@@ -27,8 +27,10 @@ export const generatePdf = async (dataInfo, requisitosConsignados, requisitosNoC
   doc.text(`Apellidos y Nombres del Beneficiario: ${dataInfo[1].pers_apellidos} ${dataInfo[1].pers_nombres}`);
   doc.text(`DEPENDENCIA: ${dataInfo[0].depe_nombre}`);
   doc.text(`ÁREA: ${dataInfo[0].area_descripcion}`);
-  const tipoServicio = decodeEntities(dataInfo[0].serv_descripcion)
-  doc.text(`TIPO DE SERVICIO: ${tipoServicio}`);
+  if (dataInfo[0].serv_descripcion) {
+    const tipoServicio = decodeEntities(dataInfo[0].serv_descripcion)
+    doc.text(`TIPO DE SERVICIO: ${tipoServicio}`);
+  }
   doc.text(`Monto solicitado: ${parseFloat(dataInfo[0].tram_monto).toFixed(2)} Bs`);
   doc.moveDown();
 
@@ -46,7 +48,12 @@ export const generatePdf = async (dataInfo, requisitosConsignados, requisitosNoC
   doc.text(`Apellidos y Nombres del Beneficiario: ${dataInfo[1].pers_apellidos} ${dataInfo[1].pers_nombres}`);
   doc.text(`DEPENDENCIA: ${dataInfo[0].depe_nombre}`);
   doc.text(`ÁREA: ${dataInfo[0].area_descripcion}`);
-  doc.text(`TIPO DE SERVICIO: ${dataInfo[0].serv_descripcion}`);
+  if (dataInfo[0].serv_descripcion) {
+    const tipoServicio = decodeEntities(dataInfo[0].serv_descripcion)
+    doc.text(`TIPO DE SERVICIO: ${tipoServicio}`);
+    doc.moveDown();
+  }
+  doc.text(`Monto solicitado: ${parseFloat(dataInfo[0].tram_monto).toFixed(2)} Bs`);
   doc.text(`Monto solicitado: ${parseFloat(dataInfo[0].tram_monto).toFixed(2)} Bs`);
   doc.moveDown();
 
@@ -54,15 +61,17 @@ export const generatePdf = async (dataInfo, requisitosConsignados, requisitosNoC
   doc.image(qrPath, 450, 50, { fit: [100, 100], align: "center" });
 
   // Requisitos Consignados
-  doc.fontSize(10).text("Requisitos Consignados", { underline: true });
-  const decodedRequiConsignados = requisitosConsignados.map(req => ({
-      ...req,
-      requ_descripcion: decodeEntities(req.requ_descripcion)
-  }));
-  decodedRequiConsignados.forEach((req, index) => {
-    doc.fontSize(8).text(`${index + 1}. ${req.requ_descripcion}`);
-  });
-  doc.moveDown();
+  if (requisitosConsignados.length > 0) {
+    doc.fontSize(10).text("Requisitos Consignados", { underline: true });
+    const decodedRequiConsignados = requisitosConsignados.map(req => ({
+        ...req,
+        requ_descripcion: decodeEntities(req.requ_descripcion)
+    }));
+    decodedRequiConsignados.forEach((req, index) => {
+      doc.fontSize(8).text(`${index + 1}. ${req.requ_descripcion}`);
+    });
+    doc.moveDown();
+  }
 
   // Requisitos No Consignados
   if (requisitosNoConsignados.length > 0) {
