@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { loginController } from "../controllers/controllerUser/login.controller.js";
 import { logoutController } from "../controllers/controllerUser/logout.controller.js";
-import { anotherProcessSchema, loginSchema, newProcessSchema, selectProcessSchema, updateProcessSchema } from "../schemas/validateSchema.js";
+import { anotherProcessSchema, editProcessSchema, loginSchema, newProcessSchema, selectProcessSchema, updateProcessSchema } from "../schemas/validateSchema.js";
 import { validatorBody } from "../middleware/validateBodyRequest.js";
 import { verifyTokenMiddleware } from "../middleware/verifyToken.middleware.js";
 import { home } from "../controllers/controllerUser/home.controller.js";
@@ -76,6 +76,6 @@ router.post("/newProcess", verifyTokenMiddleware, validatorBody(anotherProcessSc
 // requisitos no consignados
 router.get("/requisitosNoConsignados/:tramiteId", verifyTokenMiddleware, requequimentsNoConsignadosController)
 router.get("/requisitosConsignados/:tramiteId", verifyTokenMiddleware, requequimentsConsignadosController)
-router.put("/updateProcess", verifyTokenMiddleware, updateProcessController)
+router.put("/updateProcess", verifyTokenMiddleware, validatorBody(editProcessSchema), updateProcessController)
 
 export default router

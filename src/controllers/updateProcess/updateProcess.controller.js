@@ -6,7 +6,7 @@ export const updateProcessController = async (req, res) => {
 
         const { requeriments, id_tramite } = req.body;
 
-        const data = await updateProcessServices(requeriments, id_tramite);
+        await updateProcessServices(requeriments, id_tramite);
 
         res.status(200).json({message: "update process"});
     } catch (error) {
