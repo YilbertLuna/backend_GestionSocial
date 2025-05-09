@@ -15,10 +15,16 @@ Este proyecto es un servidor web para la gestión social, desarrollado con Node.
   - [Requerimientos](#requerimientos)
   - [Localidad](#localidad)
   - [Búsqueda](#búsqueda)
+  - [Mostrar Datos](#mostrar-datos)
   - [Cambio de Estado](#cambio-de-estado)
+  - [Generación de PDF](#generación-de-pdf)
+  - [Datos de Persona para Nuevo Proceso](#datos-de-persona-para-nuevo-proceso)
+  - [Edición de Proceso](#edición-de-proceso)
+  - [Reportes](#reportes)
 - [Base de Datos](#base-de-datos)
 - [Docker](#docker)
 - [Contribuciones](#contribuciones)
+- [Autor](#autor)
 
 ---
 
@@ -33,14 +39,10 @@ Este proyecto es un servidor web para la gestión social, desarrollado con Node.
 ## Estructura del Proyecto
 
 ```plaintext
-
-.env.example
+.env
 .gitignore
 .sequelizerc
-compose.yaml
 Dockerfile
-package.json
-README.md
 migrations/
   config/
     config.js
@@ -184,6 +186,9 @@ El proyecto sigue una arquitectura modular basada en capas, lo que facilita la e
 - **POST /api/logout**  
   Cierra sesión eliminando el token.
 
+- **GET /api/home**  
+  Obtiene información del usuario autenticado.
+
 ### Registro de Procesos
 
 - **POST /api/newRegister**  
@@ -222,13 +227,56 @@ El proyecto sigue una arquitectura modular basada en capas, lo que facilita la e
 - **POST /api/searchTramite**  
   Busca trámites por número o datos de la persona.
 
+### Mostrar Datos
+
+- **GET /api/showDataProcess/:id_tram**  
+  Muestra los datos de un proceso específico.
+
+- **GET /api/aplicantDataInfo/:person**  
+  Muestra la información del solicitante.
+
 ### Cambio de Estado
 
 - **POST /api/selectProcess**  
   Selecciona un proceso para actualizar su estado.
 
+- **GET /api/dataProcess/:id_tram**  
+  Muestra los datos de un proceso antes de actualizarlo.
+
+- **GET /api/selectStatus**  
+  Obtiene los estados disponibles para un proceso.
+
 - **PUT /api/changeStatus**  
   Cambia el estado de un proceso.
+
+### Generación de PDF
+
+- **GET /api/generatePdf/:personId/:tramiteId**  
+  Genera un archivo PDF con los datos proporcionados.
+
+### Datos de Persona para Nuevo Proceso
+
+- **GET /api/getDataPerson/:personId**  
+  Obtiene los datos de una persona para iniciar un nuevo proceso.
+
+- **POST /api/newProcess**  
+  Registra un nuevo proceso para una persona existente.
+
+### Edición de Proceso
+
+- **GET /api/requisitosNoConsignados/:tramiteId**  
+  Obtiene los requisitos no consignados de un proceso.
+
+- **GET /api/requisitosConsignados/:tramiteId**  
+  Obtiene los requisitos consignados de un proceso.
+
+- **PUT /api/updateProcess**  
+  Actualiza un proceso existente.
+
+### Reportes
+
+- **GET /api/listProcessApproved/**  
+  Genera una lista de procesos con estado "aprobado".
 
 ---
 
