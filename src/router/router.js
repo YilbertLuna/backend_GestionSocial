@@ -27,6 +27,7 @@ import { newProcessController } from "../controllers/newProcess/newProcess.contr
 import { requequimentsNoConsignadosController } from "../controllers/requisitosNoConsignados/requisitosNoConsignados.controller.js";
 import { requequimentsConsignadosController } from "../controllers/requisitosConsignados/requisitosConsignado.controller.js";
 import { updateProcessController } from "../controllers/updateProcess/updateProcess.controller.js";
+import { listProcessApprovedController } from "../controllers/reportes/listProcessApproved/listProcessApproved.controller.js";
 
 const router = Router();
 
@@ -78,4 +79,7 @@ router.get("/requisitosNoConsignados/:tramiteId", verifyTokenMiddleware, requequ
 router.get("/requisitosConsignados/:tramiteId", verifyTokenMiddleware, requequimentsConsignadosController)
 router.put("/updateProcess", verifyTokenMiddleware, validatorBody(editProcessSchema), updateProcessController)
 
+// reportes
+// router for create list process with status "aprobado"
+router.get("/listProcessApproved", verifyTokenMiddleware, listProcessApprovedController)
 export default router
