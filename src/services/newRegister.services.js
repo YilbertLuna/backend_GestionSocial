@@ -62,7 +62,6 @@ export const newProcess = async (
         dataAplicant,
         newNumberProcess,
         dependencia_id,
-        dataLocation,
         beneficiario,
         isAplicantBeneficiary
     });

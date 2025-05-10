@@ -1,4 +1,4 @@
-import { Reportes } from "../../repository/reportes.js";
+import { Reportes } from "../../repository/reportesRepository.js";
 
 const reportes = new Reportes();
 
