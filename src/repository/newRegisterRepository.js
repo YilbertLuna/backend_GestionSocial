@@ -171,7 +171,7 @@ export class NewRegisterRepository {
         return data
     }
 
-    async newProcessToPerson({req, originProcess, processStatus, aplicationData, cedula, dataAplicant, newNumberProcess, dependencia_id, dataLocation, beneficiario, isAplicantBeneficiary}) {
+    async newProcessToPerson({req, originProcess, processStatus, aplicationData, cedula, dataAplicant, newNumberProcess, dependencia_id, beneficiario, isAplicantBeneficiary}) {
         let requisitosValues = '';
         if (req && req.length > 0) {
             req.forEach((requisito, index) => {
@@ -182,7 +182,7 @@ export class NewRegisterRepository {
             });
         }
         const requisitosInsert = req && req.length > 0 ? `
-            , i AS (
+            , f AS (
                 INSERT INTO depen_serv_requi_tramites (
                     requisitos_requ_id,
                     depe_serv_depe_id,
@@ -195,51 +195,46 @@ export class NewRegisterRepository {
         ` : '';
 
         // consulta para cada caso de beneficiario
-        const personIsBenf = `, g AS (
-                UPDATE
-                    personas
-                SET
-                    pers_apellidos = '${dataAplicant.pers_apellidos}',
-                    pers_nombres = '${dataAplicant.pers_nombres}',
-                    pers_direccion = '${dataLocation.Direccion}',
-                    parroquia_parr_id = ${dataLocation.parroquia_id},
-                    parroquia_municipio_muni_id = ${dataLocation.municipio_id},
-                    parroquia_municipio_estado_estado_id = ${dataLocation.estado_id},
-                    pers_fec_nac = '${dataAplicant.pers_fec_nac}',
-                    pers_nacionalidad = '${dataAplicant.pers_document}'
-                WHERE
-                    pers_cedula = '${dataAplicant.pers_cedula}' AND tipo_persona_tipo_pers_id = 2
-                RETURNING *
-            ),
-        `
-        const personNoBenef = `, g AS (
-            INSERT INTO personas (
-                pers_apellidos,
-                pers_nombres,
-                pers_cedula,
-                pers_direccion,
-                parroquia_parr_id,
-                parroquia_municipio_muni_id,
-                parroquia_municipio_estado_estado_id,
-                tipo_persona_tipo_pers_id,
-                pers_fec_nac,
-                pers_nacionalidad
-            ) VALUES (
-                '${beneficiario.benf_apellidos}',
-                '${beneficiario.benf_nombres}',
-                '${beneficiario.benf_cedula}',
-                '${beneficiario.benf_direccion}',
-                ${beneficiario.benf_parroquia_id},
-                ${beneficiario.benf_municipio_id},
-                ${beneficiario.benf_estado_id},
-                2,
-                '${beneficiario.benf_fec_nac}',
-                '${beneficiario.benf_document}'
+        const personIsBenf = `
+            , h AS (
+                SELECT
+                    pers_id,
+                    parroquia_parr_id,
+                    parroquia_municipio_muni_id,
+                    parroquia_municipio_estado_estado_id
+                FROM personas
+                WHERE pers_cedula = '${dataAplicant.pers_cedula}' and tipo_persona_tipo_pers_id = 2 
             )
-            RETURNING *
-        ),
         `
-
+        const personNoBenef = `
+            , h AS (
+                INSERT INTO personas (
+                    pers_apellidos,
+                    pers_nombres,
+                    pers_cedula,
+                    pers_direccion,
+                    parroquia_parr_id,
+                    parroquia_municipio_muni_id,
+                    parroquia_municipio_estado_estado_id,
+                    tipo_persona_tipo_pers_id,
+                    pers_fec_nac,
+                    pers_nacionalidad
+                ) VALUES (
+                    '${beneficiario.benf_apellidos}',
+                    '${beneficiario.benf_nombres}',
+                    '${beneficiario.benf_cedula}',
+                    '${beneficiario.benf_direccion}',
+                    ${beneficiario.benf_parroquia_id},
+                    ${beneficiario.benf_municipio_id},
+                    ${beneficiario.benf_estado_id},
+                    2,
+                    '${beneficiario.benf_fec_nac}',
+                    '${beneficiario.benf_document}'
+                )
+                RETURNING *
+            )
+        `
+        
         var persBenf 
         if( isAplicantBeneficiary === 'SI') {
           persBenf =   personIsBenf
@@ -249,11 +244,11 @@ export class NewRegisterRepository {
 
         const query = `
             WITH a AS (
-                INSERT INTO TRAMITES (
-                    TRAM_FECHA_INICIO,
-                    TRAM_MONTO,
-                    TRAM_DESCRIPCION,
-                    USUA_CEDULA
+                INSERT INTO tramites (
+                    tram_fecha_inicio,
+                    tram_monto,
+                    tram_descripcion,
+                    usua_cedula
                 ) VALUES (
                     NOW(),
                      ${aplicationData.monto},
@@ -261,23 +256,18 @@ export class NewRegisterRepository {
                     '${cedula}'
                 )
                 RETURNING *
-            ), b as (
-                UPDATE
-                    personas
-                SET
-                    pers_apellidos = '${dataAplicant.pers_apellidos}',
-                    pers_nombres = '${dataAplicant.pers_nombres}',
-                    pers_direccion = '${dataLocation.Direccion}',
-                    parroquia_parr_id = ${dataLocation.parroquia_id},
-                    parroquia_municipio_muni_id = ${dataLocation.municipio_id},
-                    parroquia_municipio_estado_estado_id = ${dataLocation.estado_id},
-                    pers_fec_nac = '${dataAplicant.pers_fec_nac}',
-                    pers_nacionalidad = '${dataAplicant.pers_document}'
-                WHERE
-                    pers_cedula = '${dataAplicant.pers_cedula}'
-                RETURNING *
+            ), b AS (
+                -- consulta para obtener los datos de la persona solicitante
+                SELECT
+                    pers_id,
+                    tipo_persona_tipo_pers_id,
+                    parroquia_parr_id,
+                    parroquia_municipio_muni_id,
+                    parroquia_municipio_estado_estado_id
+                FROM personas
+                WHERE pers_cedula = '${dataAplicant.pers_cedula}' and tipo_persona_tipo_pers_id = 1
             ), c AS (
-            INSERT INTO personas_tramites (
+                INSERT INTO personas_tramites (
                     personas_pers_id,
                     persona_tipo_pers_id,
                     tramites_tram_id,
@@ -285,15 +275,24 @@ export class NewRegisterRepository {
                     personas_parr_muni_id,
                     personas_parr_muni_estado_id
                 ) VALUES (
-                    (SELECT PERS_ID FROM b LIMIT 1), 
-                    (SELECT TIPO_PERSONA_TIPO_PERS_ID FROM b LIMIT 1),
-                    (SELECT TRAM_ID FROM A LIMIT 1),
-                    (SELECT PARROQUIA_PARR_ID FROM b LIMIT 1),
-                    (SELECT PARROQUIA_MUNICIPIO_MUNI_ID FROM b LIMIT 1),
-                    (SELECT PARROQUIA_MUNICIPIO_ESTADO_ESTADO_ID FROM b LIMIT 1)
+                    (SELECT pers_id FROM b LIMIT 1),
+                    (SELECT tipo_persona_tipo_pers_id FROM b LIMIT 1),
+                    (SELECT tram_id from a LIMIT 1),
+                    (SELECT parroquia_parr_id FROM b LIMIT 1),
+                    (SELECT parroquia_municipio_muni_id FROM b LIMIT 1),
+                    (SELECT parroquia_municipio_estado_estado_id FROM b LIMIT 1)
                 )
-                RETURNING *   
+                RETURNING *
             ), d AS (
+                INSERT INTO tramite_procedencia (
+                    tram_id,
+                    id_procedencia
+                ) VALUES (
+                    (SELECT tram_id FROM a LIMIT 1),
+                    ${originProcess}
+                )
+                RETURNING *
+            ), e AS (
                 INSERT INTO tramite_rangos (
                     id_tramite,
                     nro_tramite,
@@ -304,16 +303,8 @@ export class NewRegisterRepository {
                     ${dependencia_id} 
                 )
                 RETURNING *
-            ), e AS (
-                INSERT INTO tramite_procedencia (
-                    tram_id,
-                    id_procedencia
-                ) VALUES (
-                    (SELECT tram_id FROM a LIMIT 1),
-                    ${originProcess}
-                )
-                RETURNING *
-            ), f AS (
+            ) ${requisitosInsert} ,
+             g AS (
                 INSERT INTO status_tramites VALUES (
                     (SELECT tram_id FROM a LIMIT 1),
                     NOW(),
@@ -323,19 +314,19 @@ export class NewRegisterRepository {
                     0
                 )
                 RETURNING *
-            ) ${persBenf}
-            h AS (
+            ) ${persBenf} ,
+            i AS (
                 INSERT INTO personas_tramites VALUES (
-                    (SELECT pers_id FROM g LIMIT 1),
+                    (SELECT pers_id FROM h LIMIT 1),
                     2,
                     (SELECT tram_id FROM a LIMIT 1),
-                    (SELECT parroquia_parr_id FROM g LIMIT 1),
-                    (SELECT parroquia_municipio_muni_id FROM g LIMIT 1),
-                    (SELECT parroquia_municipio_estado_estado_id FROM g LIMIT 1)
+                    (SELECT parroquia_parr_id FROM h LIMIT 1),
+                    (SELECT parroquia_municipio_muni_id FROM h LIMIT 1),
+                    (SELECT parroquia_municipio_estado_estado_id FROM h LIMIT 1)
                 )
                 RETURNING *
-            ) ${requisitosInsert} 
-            SELECT * FROM g;
+            )
+            SELECT * FROM i;
         `
         const [data, ] = await sequelize.query(query)
         return data

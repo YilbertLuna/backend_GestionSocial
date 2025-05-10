@@ -9,7 +9,6 @@ export const newProcessController = async (req, res) => {
             aplicationData,
             beneficiaryData,
             dataAplicant,
-            dataLocation,
             isAplicantBeneficiary,
             requeriments
         } = req.body;
@@ -19,7 +18,6 @@ export const newProcessController = async (req, res) => {
             aplicationData,
             beneficiaryData,
             dataAplicant,
-            dataLocation,
             isAplicantBeneficiary,
             requeriments,
             dependencia_id,
