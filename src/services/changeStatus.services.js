@@ -5,8 +5,8 @@ import { SearchTramite } from "../repository/searchTramiteRepository.js";
 const status = new ChangeStatus();
 const process = new SearchTramite()
 
-export const changeProcess = async ({id_process, id_new_status, cedula, status_observation, totalAmount}) => {
-    const newStatus = await status.changeStatus({id_process, id_new_status, cedula, status_observation, totalAmount});
+export const changeProcess = async ({id_process, id_new_status, cedula, status_observation, tram_monto}) => {
+    const newStatus = await status.changeStatus({id_process, id_new_status, cedula, status_observation, tram_monto});
     return newStatus
 }
 

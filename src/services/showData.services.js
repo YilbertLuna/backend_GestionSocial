@@ -10,10 +10,11 @@ export const showDataProcess = async (id_tram) => {
 
 export const showDataProcessBeforeUpdate = async (id_tram) => {
     const data = await show.showProcessBeforeUpdate(id_tram)
-    if(!data.ser_descripcion) {
+    if(!data[0].serv_descripcion) {
         return data;
     } else {
-        return validateAndDecodeData(data);
+        const decode = validateAndDecodeData(data)
+        return decode
     }
 }
 
