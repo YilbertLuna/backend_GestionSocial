@@ -9,20 +9,22 @@ export const newProcessController = async (req, res) => {
             aplicationData,
             beneficiaryData,
             dataAplicant,
+            dataLocation,
             isAplicantBeneficiary,
             requeriments
         } = req.body;
         const { cedula, dependencia_id } = req.User
 
         await newProcess(
-            aplicationData,
-            beneficiaryData,
-            dataAplicant,
-            isAplicantBeneficiary,
-            requeriments,
-            dependencia_id,
-            cedula
-        )
+                aplicationData,
+                beneficiaryData,
+                dataAplicant,
+                dataLocation,
+                isAplicantBeneficiary,
+                requeriments,
+                dependencia_id,
+                cedula
+            )
 
         return res.status(200).json({message: "New process created successfully"});
     } catch (error) {
