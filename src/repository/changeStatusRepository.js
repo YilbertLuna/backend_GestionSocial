@@ -11,13 +11,13 @@ export class ChangeStatus {
         return data
     }
 
-    async changeStatus({ id_process, id_new_status, cedula, status_observation, totalAmount }) {
+    async changeStatus({ id_process, id_new_status, cedula, status_observation, tram_monto }) {
         const columns = ['tramites_tram_id', 'fecha', 'status_stat_id', 'usuarios_usua_cedula', 'status_observacion'];
         const values = [`${id_process}`, 'now()', `${id_new_status}`, `'${cedula}'`, `'${status_observation}'`];
     
-        if (totalAmount) {
+        if (tram_monto) {
             columns.push('monto_aprobado');
-            values.push(`${totalAmount}`);
+            values.push(`${tram_monto}`);
         }
     
         const query = `
